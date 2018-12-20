@@ -1,0 +1,14 @@
+9.1
+a. The bundling does not do much for a project of this size. Since the dist directory only has a few items inside I don't think webpack is that valuable for small projects. For larger things I can see it be useful
+b. Webpack takes React and JavaScript into ES5 so browsers work
+c. You can't load the file locally. Bundle.js can't be found because the path is not relative to the location of the directory.
+d. Webpack preprocesses jsx files so that the browser can read the code.
+
+9.2
+a. index.html is larger than before we changed the dist directory
+b. Requests are simpler becuase libraries and dependencies are in one place. Things can be done in one request instead of multiple
+c. index.html and bundle.js are the only ones loaded. styles file is a string in bundle.js which is simpler
+
+9.3
+a. Changes to the SPA are reflected in the localhost:3001  because it is refreshed with the new bundle and index files. These changes do not appear for localhost:3000
+b. Webpack can be useful depending on the project. It seems like a very small change for the amount of space saved and there was not much convenience in bundling everything. I can see for other environments it would be better to use Webpack.
