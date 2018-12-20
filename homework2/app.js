@@ -1,8 +1,9 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 
-var people = [
+const people = [
 		{
 			firstName: "Tyler",
 			lastName: "Durden",
@@ -29,30 +30,69 @@ var people = [
 		},
 ];
 
-function getSeniority(person) {
-	var start = new Date(Date.parse(person.startDate));
-	var currentDat = new Date(Date.now());
-	var numYears = now.getFullYear() - start.getFullYear();
-	return person.firstName + " " + person.lastName + " has worked at the company for " + years + " years."
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+app.use('/', express.static(__dirname + '/public'));
+
+app.get('/', (req, res) => res.sendFile(__dirname + '/public/addPerson.html'));
+
+const getYear = (startDate) => {
+  const today = new Date();
+  const birthDate = new Date(startDate);
+  let year = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    year--;
+  }
+  return year;
 }
 
-function printPerson(person) {
-	return '<br>' + "First Name: " + person.firstName + '<br>'
-		+  "Last Name: " + person.lastName + '<br>'
-		+  "loginID: " + person.loginID + '<br>'
-		+  "startDate: " + person.startDate + '<br><br>'
+//function fo find a person with specific id
+const findPerson = (res, id) => {
+  const person = people.find(person => person.loginID === id);
+  if (person === undefined) {
+    res.sendStatus(404);
+  }
+  return person;
 }
 
 app.use('/', express.static('public'))
 
-app.get('/people', (req, res) => res.send(people))
+app.get('/people', (req, res) => res.json(people))
+    .post('/people', (req, res) => {
+	// Make sure the loginId is unique
+	for (let person of people) {
+	    if (person.loginId === req.body.loginId) {
+		res.sendStatus(400);
+		return;
+	    }
+	}
+	// Very unsafe but whatever
+	people.push(req.body);
+	res.sendStatus(200);
+    });
 
-//adds person pages for the record at /people/loginID
-people.forEach(person => app.get('/people/' + person.loginID, (req, res) => res.send(printPerson(person))))
-//adds person pages for the name at /people/loginID/name
-people.forEach(person => app.get('/people/' + person.loginID + "/name", (req, res) => res.send(person.firstName + " " + person.lastName)))
-//adds person pages for all years at /people/loginID/years
-people.forEach(person => app.get('/people/' + person.loginID + "/years/", (req, res) => res.send(getSeniority(person))))
+app.get('/person/:id', (req, res) => {
+  const person = findPerson(res, req.params.id);
+  if (person !== undefined) {
+    res.json(person);
+  }
+});
+
+app.get('/person/:id/name', (req, res) => {
+  const person = findPerson(res, req.params.id);
+  if (person !== undefined) {
+    res.json(`${person.firstName} ${person.lastName}`);
+  }
+});
+
+app.get('/person/:id/year', (req, res) => {
+  const person = findPerson(res, req.params.id);
+  if (person !== undefined) {
+    res.json(getYear(person.startDate));
+  }
+});
 
 // Add 404 response
 app.get('*', (req, res) => res.send("404 Error - The page you are looking for doesn't exist :/"));
