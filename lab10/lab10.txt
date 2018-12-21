@@ -1,0 +1,12 @@
+10.1
+a. Mongo is NOSQL. In NOSQL there are not queries. CRUD operations act like functions. MONGO can be used over multiple clusters for better performance than SQL.
+
+b. Running Mongo locally is similar to running anything else locally. Offline means there is no reliance on servers or cloud going down. But bad hardware can easily destroy any work done on that machine. Also there are not multiple machines with access to the db.
+c. Sandbox is small. The collection for this app is small so mlab is appropriate but for large projects with high traffic it might not be able to handle it.
+
+10.2
+a. I used start because of Webpack. SPA would not work with just Node.
+
+b. The client only gets information from the db every few seconds so it would take time for the changes to appear.
+
+c. I think that because it is so simple that a document based DB is appropriate. However, I do not like NOSQL in general so I may be biased towards MySQL or SQLServer.
